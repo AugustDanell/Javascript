@@ -1,0 +1,47 @@
+<script src = "http://spelprogrammering.nu/simple.js">
+function start(){
+	
+	ball = {sx: 0,
+			sy: 0,
+			v0: 57,       // Jag är 19 år så v0 = 19 m/s. I det här försöket har jag dock multiplicerat hastigheten med tre för att man bättre ska se att kastet är
+			              // av horisontell karaktär eftersom det är svårt att se annars då gradantalet är väldigt lågt (10 grader).
+			              // Det är viktigt att veta att den är av horisontell karaktär så att vi kan använda oss av formeln: vy = voy - gt.
+			alpha: pi/18, // Jag är född den åttonde Februari så det blir en summa på 10, alltså 10 grader eller pi/18 radianer. (8+2) 
+		};
+	
+	AirResistance = {
+			Form: 0.15,            // Eftersom föremålet i fråga är av sfärisk karaktär så ger vi formkonstanten ett värde på 0.15.
+			Mass: 20,              // Vi antar att massan är 20kg.
+			Area: (0.5*0.5*3.14),  // Vi förmodar att diametern på kulan är en meter, så radien blir alltså en halvmeter och arean 0.5 * 0.5 * pi. 
+			Density: 1.226};       // Luftens densitet vid havsnivå och vid 20 grader celsius. 
+			
+	
+	world = {g: -9.8,
+			 t: 0};
+			 
+	ball.v0x = ball.v0 * cos(ball.alpha);
+	ball.v0y = ball.v0 * sin(ball.alpha);
+	
+	
+	}
+	
+	function update()
+	{
+		world.t += 0.05;
+	
+		ball.AirResistanceY = (AirResistance.Form * ((AirResistance.Area * AirResistance.Density * (ball.v0y - world.g*world.t) * (ball.v0y - world.g*world.t))/2))/AirResistance.Mass; 
+		// Ovanstående kod är formeln för luftmotstånd i y-led. 
+		// Koden "(ball.v0y - world.g*world.t) * (ball.v0y - world.g*world.t )" är då lika med v^2 eftersom "(ball.v0y - world.g*world.t)" = v0y - gt = v i x-led.
+		
+		ball.AirResistanceX = (AirResistance.Form * ((AirResistance.Area * AirResistance.Density * ball.v0x * ball.v0x)/2))/AirResistance.Mass; 
+		// Ovanstående kod är formeln för luftmotstånd i x-led.
+		
+		
+		ball.sy = ball.v0y*world.t + (world.g*world.t*world.t) / 2;
+		ball.sx = ball.v0x*world.t;
+		
+		clearScreen();
+		circle((ball.sx - ball.AirResistanceX), 150 - (ball.sy - ball.AirResistanceY), 5, "black"); //Jag börjar med Sy = 150m, det är för att vi bättre ska kunna se hur bollen färdas.
+		
+	}
+</script>
